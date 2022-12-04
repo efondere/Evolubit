@@ -55,7 +55,7 @@ public class GenomeData
         // strength: 4 - 7
         // color: 8 - 10
         // senseStrength: 11 - 15
-        // lifetime: 15 - 16
+        // lifetime: 15 - 16-
 
         for (int i = 0; i < GENOME_SIZE * 2; ++i)
         {
