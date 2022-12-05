@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SimulationManager : MonoBehaviour
@@ -48,11 +49,31 @@ public class SimulationManager : MonoBehaviour
             s_simulationDay++;
             s_dayTime -= 1.0f;
 
+            float averageWeight = 0.0f;
+            float averageStrength = 0.0f;
+            float averageSenseStrength = 0.0f;
+            Vector3 averageColor = new Vector3(0.0f, 0.0f, 0.0f);
+            float averageLifetime = 0.0f;
+
             BlobBehavior[] blobBehaviors = FindObjectsOfType(typeof(BlobBehavior)) as BlobBehavior[];
             foreach (BlobBehavior blobBehavior in blobBehaviors)
             {
+                averageWeight += blobBehavior.getGenomeData().getWeight();
+                averageStrength += blobBehavior.getGenomeData().getStrength();
+                averageSenseStrength += blobBehavior.getGenomeData().getSenseStength();
+                Color color = blobBehavior.getGenomeData().getColor();
+                averageColor += new Vector3(color.r, color.g, color.b);
+                averageLifetime += blobBehavior.getGenomeData().getLifetime();
                 blobBehavior.onDayOver();
             }
+
+            averageWeight /= blobBehaviors.Length;
+            averageStrength /= blobBehaviors.Length;
+            averageSenseStrength /= blobBehaviors.Length;
+            averageColor /= blobBehaviors.Length;
+            averageLifetime /= blobBehaviors.Length;
+
+            Debug.Log("Daily statistics report - W: " + averageWeight + ", S: " + averageStrength + ", SS: " + averageSenseStrength + ", C: " + averageColor + ", L: " + averageLifetime);
 
             foodGenerator.restock();
         }

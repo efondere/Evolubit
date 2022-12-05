@@ -349,4 +349,9 @@ public class BlobBehavior : MonoBehaviour
             m_isMature = true;
         }
     }
+
+    public GenomeData getGenomeData()
+    {
+        return m_genome.getGenomeData();
+    }
 }
