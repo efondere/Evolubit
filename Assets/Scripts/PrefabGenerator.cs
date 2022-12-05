@@ -53,7 +53,7 @@ public class PrefabGenerator : MonoBehaviour
             {
                 radius = c.radius;
             }
-            if (Physics2D.OverlapCircle(spawnPosition, radius * transform.localScale.x, LayerMask.GetMask("Default")) == null)
+            if (Physics2D.OverlapCircle(spawnPosition, radius * prefab.transform.localScale.x, LayerMask.GetMask("Default")) == null)
             {
                 GameObject g = Instantiate(prefab, spawnPosition, Quaternion.identity);
                 break;
