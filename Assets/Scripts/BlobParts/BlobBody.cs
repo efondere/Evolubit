@@ -27,8 +27,8 @@ public class BlobBody : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Food"))
         {
-            m_blobBehavior.eat(0.2f);
             collision.gameObject.SetActive(false);
+            m_blobBehavior.eat(0.5f);
         }
     }
 }

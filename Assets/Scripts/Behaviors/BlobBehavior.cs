@@ -33,17 +33,20 @@ public class BlobBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<CircleCollider2D>().radius = m_genome.getSightRadius();
-        GetComponentInChildren<BlobBody>().SetColor(m_genome.getColor());
+        transform.Find("BodySprite").GetComponent<SpriteRenderer>().color = m_genome.getColor();
+        transform.Find("Sensor").GetComponent<CircleCollider2D>().radius = m_genome.getSightRadius();
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector3 direction = new Vector3(0, 0, 0);
+
+        Color debugColor = Color.black;
         
         if (m_predatorList.Count > 0) // check for predators
         {
+            debugColor = Color.red;
             foreach (GameObject predator in m_predatorList)
             {
                 Vector3 predatorForce = transform.position - predator.transform.position;
@@ -53,14 +56,17 @@ public class BlobBehavior : MonoBehaviour
         }
         else if (m_foodLevel >= 0.998f) // return to base
         {
+            debugColor = Color.yellow;
             direction = new Vector3(m_startingZone.position.x - transform.position.x, 0);
         }
         else if (m_closestFood != null) // check for food
         {
+            debugColor = Color.green;
             direction = m_closestFood.transform.position - transform.position;
         }
         else // move randomly
         {
+            debugColor = Color.white;
             direction = GetComponent<Rigidbody2D>().velocity * m_genome.getMovementFactor() + GetRandomDirectionVector();
         }
 
@@ -72,7 +78,7 @@ public class BlobBehavior : MonoBehaviour
             direction.Normalize();
         }
 
-        Debug.DrawRay(transform.position, direction, Color.red, 0.001f);
+        Debug.DrawRay(transform.position, direction, debugColor, 0.001f);
 
         GetComponent<Rigidbody2D>().velocity = direction * m_genome.getSpeed();
 
@@ -97,13 +103,24 @@ public class BlobBehavior : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Predator"))
+        if (collision.gameObject.CompareTag("Food"))
         {
-            m_predatorList.Add(collision.gameObject);
+            collision.gameObject.SetActive(false);
+            eat(0.5f);
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
+    {
+        
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        
+    }
+
+    public void OnSensorTriggerEnter(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Food"))
         {
@@ -114,26 +131,40 @@ public class BlobBehavior : MonoBehaviour
 
                 if (newFood.sqrMagnitude < currentClosestFood.sqrMagnitude)
                 {
-                    m_closestFood.GetComponent<SpriteRenderer>().color = Color.yellow;
-
                     m_closestFood = collision.gameObject;
-                    m_closestFood.GetComponent<SpriteRenderer>().color = Color.green;
-                }
-                else
-                {
-                    collision.gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
                 }
             }
             else
             {
                 m_closestFood = collision.gameObject;
-                m_closestFood.GetComponent<SpriteRenderer>().color = Color.green;
             }
+        }
+
+        if (collision.gameObject.CompareTag("Predator"))
+        {
+            m_predatorList.Add(collision.gameObject);
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public void OnSensorTriggerStay(Collider2D collision)
     {
+        
+    }
+
+    public void OnSensorTriggerExit(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Food"))
+        {
+            Debug.Log(name + " has detected a food that left his sensor");
+            if (m_closestFood != null)
+            {
+                if (collision.gameObject.GetInstanceID() == m_closestFood.GetInstanceID())
+                {
+                    m_closestFood = null;
+                }
+            }
+        }
+
         if (collision.gameObject.CompareTag("Predator"))
         {
             m_predatorList.Remove(collision.gameObject);
