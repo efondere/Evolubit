@@ -25,13 +25,38 @@ public class PredatorBehavior : MonoBehaviour
 
     }
 
+    private bool isInWanderZone()
+    {
+        Vector2 localPosition = transform.position - wanderArea.position;
+        if (localPosition.x < wanderArea.rect.xMin || localPosition.x > wanderArea.rect.xMax
+            || localPosition.y < wanderArea.rect.yMin || localPosition.y > wanderArea.rect.yMax)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private void FixedUpdate()
     {
-      if (attack)
+        if (!isInWanderZone())
+        {
+            if (attack)
+            {
+                ChooseOtherTarget(target);
+            }
+            else
+            {
+                wanderDir = new Vector3(Random.Range(wanderArea.rect.xMax, wanderArea.rect.xMin), Random.Range(wanderArea.rect.yMax, wanderArea.rect.yMin)).normalized;
+                timeBeforeChangeDir = startTimeBeforeChangeDir;
+            }
+        }
+
+        if (attack)
         {
             Attack();
         }
-      else
+        else
         {
             Wander();
         }
@@ -43,9 +68,9 @@ public class PredatorBehavior : MonoBehaviour
         rb.MovePosition(this.transform.position + chaseSpeed * Time.fixedDeltaTime * attackDir);
     }
 
-     private void OnCollisionEnter2D(Collision2D collision)
+     private void OnTriggerEnter2D(Collider2D collision)
      {
-         if (collision.collider.CompareTag("Blob")) {
+         if (collision.gameObject.CompareTag("Blob")) {
             
             ChooseOtherTarget(collision.gameObject);
 
@@ -106,6 +131,4 @@ public class PredatorBehavior : MonoBehaviour
             otherTargets.Remove(target);
         }
     }
-
-
 }

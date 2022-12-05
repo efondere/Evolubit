@@ -15,9 +15,14 @@ public class SimulationManager : MonoBehaviour
         public float dayLength = 10.0f; // in seconds
 
         public float initialFoodLevel = 0.2f; // [0.0f, 1.0f]
+        public float reproductionCost = 0.05f;
 
-        public float mutationProbability = 0.01f; // [0.0f, 1.0f], applies to EACH copy of the parameters
-        public float mutationAmplitude = 0.1f; // [0.0f, 0.5f], max mutation change
+
+        public float reproductionProximity = 0.2f;
+        public float twinProbability = 0.3f;
+
+        public float mutationProbability = 0.2f; // [0.0f, 1.0f], applies to EACH copy of the parameters
+        public float mutationAmplitude = 0.3f; // [0.0f, 0.5f], max mutation change
     };
 
     public static SimulationParameters parameters = new SimulationParameters();

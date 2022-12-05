@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Unity.VisualScripting;
@@ -9,10 +10,15 @@ public class BlobBehavior : MonoBehaviour
 {
     private List<GameObject> m_predatorList = new List<GameObject>();
     private GameObject       m_closestFood;
+    private List<GameObject> m_potentialPartners = new List<GameObject>();
+    private List<GameObject> m_currentPartners = new List<GameObject>();
 
     public RectTransform m_startingZone;
+    public GameObject BlobPrefab;
 
     private float m_foodLevel = SimulationManager.parameters.initialFoodLevel;
+
+    private bool m_isMature = true;
 
     public GenomeManager m_genome;
 
@@ -65,6 +71,11 @@ public class BlobBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        setup();
+    }
+
+    public void setup()
+    {
         transform.Find("BodySprite").GetComponent<SpriteRenderer>().color = m_genome.getColor();
         transform.Find("Sensor").GetComponent<CircleCollider2D>().radius = m_genome.getSightRadius();
 
@@ -109,8 +120,25 @@ public class BlobBehavior : MonoBehaviour
 
         if (SimulationManager.isEvening())
         {
-            direction += GetRandomDirectionVector(m_startingZone.rect, m_startingZone.position).normalized;
-            direction.Normalize();
+            if (isInStartingZone() && m_potentialPartners.Count > 0)
+            {
+                Vector3 closest = m_potentialPartners[0].transform.position - transform.position;
+                foreach (GameObject partner in m_potentialPartners)
+                {
+                    Vector3 distance = m_potentialPartners[0].transform.position - transform.position;
+                    if (distance.sqrMagnitude < closest.sqrMagnitude)
+                    {
+                        closest = distance;
+                    }
+                }
+
+                direction = closest.normalized;
+            }
+            else
+            {
+                direction += GetRandomDirectionVector(m_startingZone.rect, m_startingZone.position).normalized;
+                direction.Normalize();
+            }
         }
 
         Debug.DrawRay(transform.position, direction, debugColor, 0.001f);
@@ -143,6 +171,62 @@ public class BlobBehavior : MonoBehaviour
             Destroy(collision.gameObject);
             eat(0.5f);
         }
+
+        if (collision.gameObject.CompareTag("Blob") && m_potentialPartners.Contains(collision.gameObject))
+        {
+            m_potentialPartners.Remove(collision.gameObject);
+            m_currentPartners.Add(collision.gameObject);
+            m_foodLevel -= SimulationManager.parameters.reproductionCost;
+
+            collision.GetComponent<BlobBehavior>().reproduce(gameObject);
+            
+        }
+    }
+
+    public GameObject produceKid(GameObject partner)
+    {
+        BlobBehavior partnerBehavior = partner.GetComponent<BlobBehavior>();
+        if (!m_isMature || !partnerBehavior.m_isMature)
+            return null;
+        if (m_foodLevel <= m_genome.getDailyHunger() + SimulationManager.parameters.reproductionCost
+            || partnerBehavior.m_foodLevel <= partnerBehavior.m_genome.getDailyHunger() + SimulationManager.parameters.reproductionCost)
+        {
+            return null;
+        }
+
+        Vector2 spawnPosition = (partner.transform.position + transform.position) / 2.0f;
+        GameObject kid = Instantiate(BlobPrefab, spawnPosition, Quaternion.identity);
+        kid.GetComponent<BlobBehavior>().m_genome.CreateOffspring(m_genome.getGenomeData(), partnerBehavior.m_genome.getGenomeData());
+        kid.GetComponent<BlobBehavior>().setup();
+        kid.GetComponent<BlobBehavior>().m_isMature = false;
+
+        m_currentPartners.Add(kid);
+        partnerBehavior.m_currentPartners.Add(kid);
+
+        m_foodLevel -= SimulationManager.parameters.reproductionCost;
+        partnerBehavior.m_foodLevel -= SimulationManager.parameters.reproductionCost;
+
+        return kid;
+    }
+
+    public void reproduce(GameObject caller)
+    {
+        m_potentialPartners.Remove(caller);
+        m_currentPartners.Add(caller);
+
+        GameObject kid = produceKid(caller);
+        if (kid == null)
+            return;
+
+        kid.name = "offspring";
+        for (float currentTwinRandom = Random.value; currentTwinRandom >= (1 - SimulationManager.parameters.twinProbability); currentTwinRandom *= Random.value)
+        {
+            kid = produceKid(caller);
+            if (kid == null)
+                return;
+
+            kid.name = "twin";
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -153,6 +237,15 @@ public class BlobBehavior : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         
+    }
+
+    private float getColorProximity(Color color1, Color color2)
+    {
+        Vector3 color1Vec = new Vector3(color1.r, color1.g, color1.b);
+        Vector3 color2Vec = new Vector3(color2.r, color2.g, color2.b);
+        Vector3 difference = color1Vec - color2Vec;
+
+        return difference.sqrMagnitude;
     }
 
     public void OnSensorTriggerEnter(Collider2D collision)
@@ -179,6 +272,17 @@ public class BlobBehavior : MonoBehaviour
         {
             m_predatorList.Add(collision.gameObject);
         }
+
+        if (collision.gameObject.CompareTag("Blob") && m_isMature && isInStartingZone() && SimulationManager.isEvening()
+            && m_foodLevel > m_genome.getDailyHunger() + SimulationManager.parameters.reproductionCost
+            && !m_currentPartners.Contains(collision.gameObject))
+        {
+            float colorProximity = getColorProximity(m_genome.getColor(), collision.GetComponent<BlobBehavior>().m_genome.getColor());
+            if (colorProximity <= SimulationManager.parameters.reproductionProximity)
+            {
+                m_potentialPartners.Add(collision.gameObject);
+            }
+        }
     }
 
     public void OnSensorTriggerStay(Collider2D collision)
@@ -203,6 +307,14 @@ public class BlobBehavior : MonoBehaviour
         {
             m_predatorList.Remove(collision.gameObject);
         }
+
+        if (collision.gameObject.CompareTag("Blob"))
+        {
+            if (m_potentialPartners.Contains(collision.gameObject))
+            {
+                m_potentialPartners.Remove(collision.gameObject);
+            }
+        }
     }
 
     public void die()
@@ -212,19 +324,29 @@ public class BlobBehavior : MonoBehaviour
 
     public void onDayOver()
     {
-        if (!isInStartingZone())
+        m_potentialPartners.Clear();
+        m_currentPartners.Clear();
+
+        if (m_isMature)
         {
-            die();
+            if (!isInStartingZone())
+            {
+                die();
+            }
+            m_daysRemaining--;
+            if (m_daysRemaining < 0)
+            {
+                die();
+            }
+            m_foodLevel -= m_genome.getDailyHunger();
+            if (m_foodLevel <= 0.0f)
+            {
+                die();
+            }
         }
-        m_daysRemaining--;
-        if (m_daysRemaining < 0)
+        else
         {
-            die();
-        }
-        m_foodLevel -= m_genome.getDailyHunger();
-        if (m_foodLevel <= 0.0f)
-        {
-            die();
+            m_isMature = true;
         }
     }
 }

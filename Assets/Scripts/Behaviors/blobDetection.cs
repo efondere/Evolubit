@@ -14,7 +14,6 @@ public class blobDetection : MonoBehaviour
             if (predatorBehavior.otherTargets.Count == 0)
             {
                 predatorBehavior.savedTarget = other.gameObject;
-                Debug.Log(predatorBehavior.savedTarget.name);
             }
             else
             {

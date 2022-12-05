@@ -214,7 +214,7 @@ public class GenomeData
     }
 }*/
 
-class GenomeData
+public class GenomeData
 {
     public float[] weight = new float[2];
     public float[] strength = new float[2];
@@ -253,12 +253,12 @@ class GenomeData
 
     private float randomMutationValue()
     {
-        if (UnityEngine.Random.value >= 0.05f)
+        if (UnityEngine.Random.value >= SimulationManager.parameters.mutationProbability)
         {
             return 0.0f;
         }
 
-        float a = 0.05f;
+        float a = SimulationManager.parameters.mutationAmplitude;
         float k = -a / 2.0f;
         float c = 1.0f;
         float x = UnityEngine.Random.Range(-1.0f, 1.0f);
@@ -322,9 +322,14 @@ public class GenomeManager : MonoBehaviour
         m_genomeData = new GenomeData();
     }
 
-    void CreateOffspring(GenomeData parent1, GenomeData parent2)
+    public void CreateOffspring(GenomeData parent1, GenomeData parent2)
     {
         m_genomeData = GenomeData.Reproduce(parent1, parent2);
+    }
+
+    public GenomeData getGenomeData()
+    {
+        return m_genomeData;
     }
 
     // Update is called once per frame

@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_startingZone: {fileID: 7014146252310955953, guid: d06e3ee6067b16147add7eab05e26196, type: 3}
+  BlobPrefab: {fileID: 6822817827374195622}
   m_genome: {fileID: 6822817827374195621}
 --- !u!114 &6822817827374195621
 MonoBehaviour:
