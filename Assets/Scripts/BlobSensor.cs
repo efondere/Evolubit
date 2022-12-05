@@ -9,6 +9,11 @@ public class BlobSensor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    private void Awake()
+    {
         m_parentBehavior = transform.parent.GetComponent<BlobBehavior>();
     }
 

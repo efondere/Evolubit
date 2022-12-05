@@ -12,9 +12,11 @@ public class BlobBehavior : MonoBehaviour
 
     public RectTransform m_startingZone;
 
-    private float m_foodLevel = 0.2f;
+    private float m_foodLevel = SimulationManager.parameters.initialFoodLevel;
 
     public GenomeManager m_genome;
+
+    private int m_daysRemaining;
 
     private Vector2 GetRandomDirectionVector()
     {
@@ -30,17 +32,54 @@ public class BlobBehavior : MonoBehaviour
         return random.normalized;
     }
 
+    private Vector2 GetRandomDirectionVector(Rect rect, Vector2 origin)
+    {
+        const float TRIGGER_FACTOR = 0.95f;
+        float xMax = rect.width / 2.0f;
+        float yMax = rect.height / 2.0f;
+
+        Vector2 random = Random.insideUnitCircle.normalized;
+        if (Mathf.Abs(transform.position.x - origin.x) > xMax * TRIGGER_FACTOR)
+        {
+            random += new Vector2(-Mathf.Pow((transform.position.x - origin.x) / xMax, 5), 0);
+        }
+        if (Mathf.Abs(transform.position.y - origin.y) > yMax * TRIGGER_FACTOR)
+        {
+            random += new Vector2(0, -Mathf.Pow((transform.position.y - origin.y) / yMax, 5));
+        }
+        return random.normalized;
+    }
+
+    private bool isInStartingZone(bool checkEvening = true)
+    {
+        if (checkEvening && !SimulationManager.isEvening())
+        {
+            return false;
+        }
+
+        Vector2 localPosition = transform.position - m_startingZone.transform.position;
+        if (localPosition.x < m_startingZone.rect.xMin || localPosition.x > m_startingZone.rect.xMax
+            || localPosition.y < m_startingZone.rect.yMin || localPosition.y > m_startingZone.rect.yMax)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         transform.Find("BodySprite").GetComponent<SpriteRenderer>().color = m_genome.getColor();
         transform.Find("Sensor").GetComponent<CircleCollider2D>().radius = m_genome.getSightRadius();
+
+        m_daysRemaining = (int)m_genome.getLifetime();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 direction = new Vector3(0, 0, 0);
+        Vector2 direction = new Vector2(0, 0);
 
         Color debugColor = Color.black;
         
@@ -49,7 +88,7 @@ public class BlobBehavior : MonoBehaviour
             debugColor = Color.red;
             foreach (GameObject predator in m_predatorList)
             {
-                Vector3 predatorForce = transform.position - predator.transform.position;
+                Vector2 predatorForce = transform.position - predator.transform.position;
                 predatorForce /= predatorForce.sqrMagnitude;
                 direction += predatorForce;
             }
@@ -57,7 +96,8 @@ public class BlobBehavior : MonoBehaviour
         else if (m_foodLevel >= 0.998f) // return to base
         {
             debugColor = Color.yellow;
-            direction = new Vector3(m_startingZone.position.x - transform.position.x, 0);
+            //direction = new Vector2(m_startingZone.position.x - transform.position.x, 0);
+            direction = GetComponent<Rigidbody2D>().velocity * m_genome.getMovementFactor() + GetRandomDirectionVector(m_startingZone.rect, m_startingZone.position);
         }
         else if (m_closestFood != null) // check for food
         {
@@ -72,9 +112,9 @@ public class BlobBehavior : MonoBehaviour
 
         direction.Normalize();
 
-        if (false /*Simulation.isDayOver()*/)
+        if (SimulationManager.isEvening())
         {
-            direction += (m_startingZone.position - transform.position).normalized;
+            direction += GetRandomDirectionVector(m_startingZone.rect, m_startingZone.position).normalized;
             direction.Normalize();
         }
 
@@ -105,7 +145,7 @@ public class BlobBehavior : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Food"))
         {
-            collision.gameObject.SetActive(false);
+            Destroy(collision.gameObject);
             eat(0.5f);
         }
     }
@@ -155,7 +195,6 @@ public class BlobBehavior : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Food"))
         {
-            Debug.Log(name + " has detected a food that left his sensor");
             if (m_closestFood != null)
             {
                 if (collision.gameObject.GetInstanceID() == m_closestFood.GetInstanceID())
@@ -168,6 +207,29 @@ public class BlobBehavior : MonoBehaviour
         if (collision.gameObject.CompareTag("Predator"))
         {
             m_predatorList.Remove(collision.gameObject);
+        }
+    }
+
+    public void die()
+    {
+        Destroy(gameObject);
+    }
+
+    public void onDayOver()
+    {
+        if (!isInStartingZone())
+        {
+            die();
+        }
+        m_daysRemaining--;
+        if (m_daysRemaining < 0)
+        {
+            die();
+        }
+        m_foodLevel -= m_genome.getDailyHunger();
+        if (m_foodLevel <= 0.0f)
+        {
+            die();
         }
     }
 }

@@ -315,6 +315,10 @@ public class GenomeManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    private void Awake()
+    {
         m_genomeData = new GenomeData();
     }
 
@@ -347,6 +351,16 @@ public class GenomeManager : MonoBehaviour
     public Color getColor()
     {
         return m_genomeData.getColor();
+    }
+
+    public uint getLifetime()
+    {
+        return m_genomeData.getLifetime();
+    }
+
+    public float getDailyHunger()
+    {
+        return m_genomeData.getWeight() * 0.7f;
     }
 
     private GenomeData m_genomeData;
