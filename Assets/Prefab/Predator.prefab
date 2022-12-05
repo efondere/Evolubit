@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3860362870627471633}
   - component: {fileID: 7053391412591099392}
   - component: {fileID: 5976629557896324724}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Detection Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,3 +206,5 @@ MonoBehaviour:
   wanderSpeed: 1
   chaseSpeed: 3
   startTimeBeforeChangeDir: 3
+  savedTarget: {fileID: 0}
+  otherTargets: []

@@ -50,13 +50,8 @@ public class BlobBehavior : MonoBehaviour
         return random.normalized;
     }
 
-    private bool isInStartingZone(bool checkEvening = true)
+    private bool isInStartingZone()
     {
-        if (checkEvening && !SimulationManager.isEvening())
-        {
-            return false;
-        }
-
         Vector2 localPosition = transform.position - m_startingZone.transform.position;
         if (localPosition.x < m_startingZone.rect.xMin || localPosition.x > m_startingZone.rect.xMax
             || localPosition.y < m_startingZone.rect.yMin || localPosition.y > m_startingZone.rect.yMax)

@@ -20,7 +20,7 @@ public class PredatorBehavior : MonoBehaviour
     private void Start()
     {
         wanderArea = new RectTransform();
-        wanderArea = GameObject.FindGameObjectWithTag("Wander Area").GetComponent<RectTransform>();
+        wanderArea = GameObject.FindGameObjectWithTag("WanderArea").GetComponent<RectTransform>();
         otherTargets = new List<GameObject>();
 
     }
