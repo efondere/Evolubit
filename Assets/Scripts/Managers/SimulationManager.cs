@@ -15,8 +15,15 @@ public class SimulationManager : MonoBehaviour
 
         public float dayLength = 10.0f; // in seconds
 
-        public float initialFoodLevel = 0.2f; // [0.0f, 1.0f]
+        public float initialFoodLevel = 0.4f; // [0.0f, 1.0f]
         public float reproductionCost = 0.05f;
+
+        public float minRed = 0.4f;
+        public float maxRed = 0.7f;
+        public float minGreen = 0.0f;
+        public float maxGreen = 0.2f;
+        public float minBlue = 0.2f;
+        public float maxBlue = 0.5f;
 
 
         public float reproductionProximity = 0.2f;

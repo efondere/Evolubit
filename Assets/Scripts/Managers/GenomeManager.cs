@@ -229,7 +229,10 @@ public class GenomeData
             weight[i] = UnityEngine.Random.Range(0.1f, 1.0f);
             strength[i] = UnityEngine.Random.Range(0.1f, 1.0f);
             senseStrength[i] = UnityEngine.Random.Range(0.1f, 1.0f);
-            color[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+            color[i] = new Color(
+                UnityEngine.Random.Range(SimulationManager.parameters.minRed, SimulationManager.parameters.maxRed),
+                UnityEngine.Random.Range(SimulationManager.parameters.minGreen, SimulationManager.parameters.maxGreen),
+                UnityEngine.Random.Range(SimulationManager.parameters.minBlue, SimulationManager.parameters.maxBlue));
             lifetime[i] = (uint)Mathf.Max(UnityEngine.Random.value * 5.0f, 1.0f);
         }
     }
@@ -345,7 +348,7 @@ public class GenomeManager : MonoBehaviour
 
     public float getSpeed()
     {
-        return (((Mathf.Pow(m_genomeData.getStrength(), 2.0f) - Mathf.Pow(m_genomeData.getWeight(), 2.0f)) / 2.0f) + 0.5f) * 10.0f;
+        return (((Mathf.Pow(m_genomeData.getStrength(), 2.0f) - Mathf.Pow(m_genomeData.getWeight(), 0.5f)) / 2.0f) + 0.5f) * 10.0f;
     }
 
     public float getMovementFactor()

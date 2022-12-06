@@ -62,7 +62,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e1cbd1b96c2a04b8bd27808d51fdfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  predatorBehavior: {fileID: 7246567606908577552}
 --- !u!50 &5775427344330310036
 Rigidbody2D:
   serializedVersion: 4
@@ -221,12 +220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f688525846bc2a47a60f3891c87644c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack: 0
-  target: {fileID: 0}
-  blobDetection: {fileID: 5976629557896324724}
-  rb: {fileID: 4064011950851829879}
-  wanderSpeed: 1
-  chaseSpeed: 3
-  startTimeBeforeChangeDir: 3
-  savedTarget: {fileID: 0}
-  otherTargets: []
+  m_potentialTargets: []
+  m_currentTarget: {fileID: 0}
+  m_startingZone: {fileID: 5100553840731640313, guid: 260e20702887e5b40919d2e18512a175, type: 3}
+  wanderSpeed: 3
+  chaseSpeed: 6
