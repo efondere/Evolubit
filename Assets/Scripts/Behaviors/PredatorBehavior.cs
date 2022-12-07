@@ -124,6 +124,8 @@ public class PredatorBehavior : MonoBehaviour
             }
         }
 
+        transform.rotation = Quaternion.AngleAxis(180.0f - Mathf.Atan2(GetComponent<Rigidbody2D>().velocity.y, GetComponent<Rigidbody2D>().velocity.x) * Mathf.Rad2Deg, Vector3.forward);
+
             //if (!isInWanderZone())
             //{
             //    if (attack)
