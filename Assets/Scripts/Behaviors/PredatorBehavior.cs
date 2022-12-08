@@ -124,7 +124,9 @@ public class PredatorBehavior : MonoBehaviour
             }
         }
 
-        transform.rotation = Quaternion.AngleAxis(180.0f - Mathf.Atan2(GetComponent<Rigidbody2D>().velocity.y, GetComponent<Rigidbody2D>().velocity.x) * Mathf.Rad2Deg, Vector3.forward);
+        Debug.DrawRay(transform.position, newVelocity, Color.yellow);
+
+        transform.localEulerAngles = new Vector3(0.0f, 0.0f, Mathf.Atan2(newVelocity.y, newVelocity.x) * Mathf.Rad2Deg);
 
             //if (!isInWanderZone())
             //{
