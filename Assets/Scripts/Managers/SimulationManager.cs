@@ -7,30 +7,32 @@ public class SimulationManager : MonoBehaviour
 {
     public class SimulationParameters
     {
-        public float minWeight = 0.1f; // this range is arbitrary
-        public float maxWeight = 1.0f;
+        public float minWeight = 0.2f; // this range is arbitrary
+        public float maxWeight = 0.8f;
 
-        public float minStrength = 0.1f; // this range is arbitrary
+        public float minStrength = 0.4f; // this range is arbitrary
         public float maxStrength = 1.0f;
 
-        public float dayLength = 10.0f; // in seconds
+        public float minSenseStrength = 0.1f;
+        public float maxSenseStrength = 1.0f;
+
+        public float dayLength = 15.0f; // in seconds
 
         public float initialFoodLevel = 0.4f; // [0.0f, 1.0f]
         public float reproductionCost = 0.05f;
 
-        public float minRed = 0.4f;
-        public float maxRed = 0.7f;
+        public float minRed = 0.0f;
+        public float maxRed = 1.0f;
         public float minGreen = 0.0f;
-        public float maxGreen = 0.2f;
-        public float minBlue = 0.2f;
-        public float maxBlue = 0.5f;
+        public float maxGreen = 1.0f;
+        public float minBlue = 0.0f;
+        public float maxBlue = 1.0f;
 
+        public float reproductionProximity = 0.3f;
+        public float twinProbability = 0.4f;
 
-        public float reproductionProximity = 0.2f;
-        public float twinProbability = 0.3f;
-
-        public float mutationProbability = 0.2f; // [0.0f, 1.0f], applies to EACH copy of the parameters
-        public float mutationAmplitude = 0.3f; // [0.0f, 0.5f], max mutation change
+        public float mutationProbability = 0.1f; // [0.0f, 1.0f], applies to EACH copy of the parameters
+        public float mutationAmplitude = 0.05f; // [0.0f, 0.5f], max mutation change
     };
 
     public static SimulationParameters parameters = new SimulationParameters();

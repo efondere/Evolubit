@@ -226,9 +226,9 @@ public class GenomeData
     {
         for (int i = 0; i < 2; i++)
         {
-            weight[i] = UnityEngine.Random.Range(0.1f, 1.0f);
-            strength[i] = UnityEngine.Random.Range(0.1f, 1.0f);
-            senseStrength[i] = UnityEngine.Random.Range(0.1f, 1.0f);
+            weight[i] = UnityEngine.Random.Range(SimulationManager.parameters.minWeight, SimulationManager.parameters.maxWeight);
+            strength[i] = UnityEngine.Random.Range(SimulationManager.parameters.minStrength, SimulationManager.parameters.maxStrength);
+            senseStrength[i] = UnityEngine.Random.Range(SimulationManager.parameters.minSenseStrength, SimulationManager.parameters.maxSenseStrength) ;
             color[i] = new Color(
                 UnityEngine.Random.Range(SimulationManager.parameters.minRed, SimulationManager.parameters.maxRed),
                 UnityEngine.Random.Range(SimulationManager.parameters.minGreen, SimulationManager.parameters.maxGreen),

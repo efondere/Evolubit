@@ -307,8 +307,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 9840313
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8afaf7c94f3d98c4985de5395fa6e54e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -369,8 +369,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.52, y: 0}
-  m_SizeDelta: {x: 12, y: 9.1663}
+  m_AnchoredPosition: {x: 1.2681, y: 0}
+  m_SizeDelta: {x: 14.5037, y: 9.1663}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1962913269551417836
 PrefabInstance:
@@ -467,6 +467,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 347968328265939238, guid: 260e20702887e5b40919d2e18512a175, type: 3}
+      propertyPath: count
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5100553840731640313, guid: 260e20702887e5b40919d2e18512a175, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

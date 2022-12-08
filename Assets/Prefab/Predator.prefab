@@ -171,8 +171,8 @@ MonoBehaviour:
   m_potentialTargets: []
   m_currentTarget: {fileID: 0}
   m_startingZone: {fileID: 5100553840731640313, guid: 260e20702887e5b40919d2e18512a175, type: 3}
-  wanderSpeed: 3
-  chaseSpeed: 6
+  wanderSpeed: 2
+  chaseSpeed: 3
 --- !u!1 &5093562183958388015
 GameObject:
   m_ObjectHideFlags: 0

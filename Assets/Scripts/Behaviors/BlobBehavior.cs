@@ -77,9 +77,10 @@ public class BlobBehavior : MonoBehaviour
     public void setup()
     {
         transform.Find("BodySprite").GetComponent<SpriteRenderer>().color = m_genome.getColor();
-        transform.Find("Sensor").GetComponent<CircleCollider2D>().radius = m_genome.getSightRadius();
+        transform.Find("Eyes").transform.localScale *= m_genome.getSightRadius() / 5.0f + 0.1f;
 
-        transform.localScale *= m_genome.getGenomeData().getWeight() * 1.5f;
+        transform.localScale *= (m_genome.getGenomeData().getWeight() * 1.5f + 0.2f);
+        transform.Find("Sensor").transform.localScale = Vector3.one * 0.5f * m_genome.getSightRadius();
 
         m_daysRemaining = (int)m_genome.getLifetime();
     }
